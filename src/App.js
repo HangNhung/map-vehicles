@@ -6,6 +6,10 @@ import ReactMapGL, { NavigationControl, Marker, Source, Layer } from "react-map-
 // import 'mapbox-gl/dist/mapbox-gl.css';
 import { geojson } from "./data/channel-bus";
 import Geocoder from 'react-map-gl-geocoder';
+import myImage from './assets/marker.svg';
+
+var img = new Image(30,30);
+img.src = myImage;
 
 function App() {
   const navControlStyle= {
@@ -19,15 +23,25 @@ function App() {
     zoom: 12
   });
 
+  // const layerStyle = {
+  //   id: 'my-layer',
+  //   type: 'circle',
+  //   source: 'points',
+  //   paint: {
+  //       'circle-color': '#f00',
+  //       'circle-radius': 25,
+  //   },
+  // };
+
   const layerStyle = {
-    id: 'my-layer',
-    type: 'circle',
-    source: 'points',
-    paint: {
-        'circle-color': '#f00',
-        'circle-radius': 25,
-    },
-  };
+    id: 'marker',
+    type: 'symbol',
+    // source: 'points',
+    layout: { "icon-image": "car-15",   
+    'icon-anchor': 'bottom',
+    'icon-offset': [0, 5],
+    'icon-allow-overlap': true }
+  }
 
   const mapRef = React.useRef();
   const handleViewportChange = React.useCallback(
@@ -49,7 +63,7 @@ function App() {
     );
 
   return (
-    <ReactMapGL 
+    <ReactMapGL   
     ref={mapRef}
     width="100vw" height="100vh"
     {...viewport}
@@ -78,6 +92,7 @@ function App() {
      ))} */}
       </ReactMapGL>
   );
-}
+
+};
 
 export default App;
