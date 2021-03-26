@@ -12,15 +12,20 @@ import ReactMapGL, {
 import { geojson } from "./data/channel-bus";
 import Geocoder from "react-map-gl-geocoder";
 // import myImage from "./assets/marker.svg";
+import { Editor, DrawPointMode, DrawLineStringMode } from "react-map-gl-draw";
 
 function App() {
-  const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState([]);
+
+  // update data dynamic
   React.useEffect(() => {
     // setInterval(() => {
     //   setData(geojson());
-    // }, 3000);
+    // }, 10000);
     setData(geojson());
   }, []);
+
+  // navigations
   const navControlStyle = {
     right: 10,
     top: 10,
@@ -31,6 +36,26 @@ function App() {
     latitude: 10.762622,
     zoom: 10,
   });
+
+  const mapRef = React.useRef();
+  const handleViewportChange = React.useCallback(
+    (newViewport) => setViewport(newViewport),
+    []
+  );
+
+  // geocoder
+  // if you are happy with Geocoder default settings, you can just use handleViewportChange directly
+  const handleGeocoderViewportChange = React.useCallback(
+    (newViewport) => {
+      const geocoderDefaultOverrides = { transitionDuration: 1000 };
+
+      return handleViewportChange({
+        ...newViewport,
+        ...geocoderDefaultOverrides,
+      });
+    },
+    [] // eslint-disable-line
+  );
 
   const layerStyle = {
     id: "my-layer",
@@ -55,24 +80,13 @@ function App() {
   //   },
   // };
 
-  const mapRef = React.useRef();
-  const handleViewportChange = React.useCallback(
-    (newViewport) => setViewport(newViewport),
-    []
-  );
-
-  // if you are happy with Geocoder default settings, you can just use handleViewportChange directly
-  const handleGeocoderViewportChange = React.useCallback(
-    (newViewport) => {
-      const geocoderDefaultOverrides = { transitionDuration: 1000 };
-
-      return handleViewportChange({
-        ...newViewport,
-        ...geocoderDefaultOverrides,
-      });
-    },
-    [] // eslint-disable-line
-  );
+  // map gl draw
+  const getFeatureStyle = () => {
+    return {
+      fill: "none",
+      stroke: "#0099FF"
+    }
+  };
 
   return (
     <ReactMapGL
@@ -84,6 +98,9 @@ function App() {
       mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
       onViewportChange={handleViewportChange}
     >
+
+      <NavigationControl style={navControlStyle} />
+
       <Geocoder
         mapRef={mapRef}
         onViewportChange={handleGeocoderViewportChange}
@@ -92,7 +109,13 @@ function App() {
         language="vi"
         limit={10}
       />
-      <NavigationControl style={navControlStyle} />
+      <Editor
+        ref={mapRef}
+        clickRadius={12}
+        featureStyle={getFeatureStyle}
+        features={data}
+        mode={new DrawPointMode()}
+      />
       <Source id="my-data" type="geojson" data={data}>
         <Layer {...layerStyle} />
       </Source>

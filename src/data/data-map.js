@@ -14,7 +14,7 @@ const hcmBoundingBox = {
 
 const renderData = (sizeData) => {
   let data = [];
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < sizeData; i++) {
     const latitude =
       Math.random() * (hcmBoundingBox.latMax - hcmBoundingBox.latMin) +
       hcmBoundingBox.latMin;
@@ -24,7 +24,7 @@ const renderData = (sizeData) => {
     data.push([longitude, latitude]);
   }
 
-  console.log("data", data);
+  // console.log("data", data);
   return data;
 };
 
@@ -34,6 +34,7 @@ export const geojson = () => {
     features: [
       {
         type: "Feature",
+        properties: {},
         geometry: {
           type: "LineString",
           // coordinates: [
@@ -42,7 +43,7 @@ export const geojson = () => {
           //   [106.6975553, 10.7675313],
           //   [106.6676433, 10.7929163],
           // ],
-          coordinates: renderData(20),
+          coordinates: renderData(3),
         },
       },
     ],
