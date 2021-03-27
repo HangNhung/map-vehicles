@@ -9,21 +9,24 @@ import ReactMapGL, {
   Layer,
 } from "react-map-gl";
 // import 'mapbox-gl/dist/mapbox-gl.css';
-import { geojson } from "./data/channel-bus";
+// import { geojson } from "./data/channel-bus";
 import Geocoder from "react-map-gl-geocoder";
 // import myImage from "./assets/marker.svg";
-import { Editor, DrawPointMode, DrawLineStringMode } from "react-map-gl-draw";
+import { Editor, DrawPointMode } from "react-map-gl-draw";
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "http://localhost:8000/";
 
 function App() {
   const [data, setData] = React.useState([]);
 
   // update data dynamic
+
   React.useEffect(() => {
-    // setInterval(() => {
-    //   setData(geojson());
-    // }, 10000);
-    setData(geojson());
-  }, []);
+    const socket = socketIOClient(ENDPOINT);
+    socket.on("getDataMap", (data) => {
+        setData(data);
+    });
+    }, []);
 
   // navigations
   const navControlStyle = {
